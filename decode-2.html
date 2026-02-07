@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Apollo Engineering College - Cyber Decode Challenge</title>
+
+<!-- Mobile Support -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+  margin:0;
+  overflow:hidden;
+  color:lime;
+  font-family:Arial;
+  text-align:center;
+}
+
+/* MATRIX BACKGROUND */
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:-1;
+}
+
+/* HEADER */
+.header{
+  background:black;
+  padding:10px;
+  border-bottom:3px solid lime;
+  font-size:26px;
+  font-weight:bold;
+  color:cyan;
+}
+
+/* MAIN BOX */
+.container{
+  width:70%;
+  margin:auto;
+  padding:15px;
+  border:2px solid lime;
+  background:rgba(0,0,0,0.85);
+  border-radius:10px;
+  margin-top:20px;
+}
+
+button{
+  padding:12px 20px;
+  font-size:18px;
+  background:yellow;
+  border:none;
+  cursor:pointer;
+  border-radius:5px;
+}
+input{
+  font-size:16px;
+  padding:8px;
+  width:220px;
+  border-radius:5px;
+  border:2px solid lime;
+  background:black;
+  color:lime;
+}
+.hidden{display:none;}
+
+/* SECRET KEYS BOX */
+.keybox{
+  background:black;
+  color:cyan;
+  padding:20px;
+  border:4px solid cyan;
+  font-size:22px;
+  width:60%;
+  margin:auto;
+  margin-top:20px;
+  text-align:center;
+  border-radius:10px;
+}
+
+.keytable{
+  width:100%;
+  color:lime;
+  font-size:22px;
+  border-collapse:collapse;
+}
+
+.keytable td{
+  border:1px solid lime;
+  padding:8px;
+  text-align:center;
+  font-weight:bold;
+}
+
+/*  MOBILE VIEW */
+@media(max-width:600px){
+  .container,.keybox{
+    width:95%;
+    font-size:16px;
+  }
+  input,button{
+    width:90%;
+    font-size:16px;
+  }
+  .header{
+    font-size:18px;
+  }
+  .keytable{
+    font-size:16px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- MATRIX BACKGROUND -->
+<canvas id="matrix"></canvas>
+
+<!-- HEADER -->
+<div class="header">
+APOLLO ENGINEERING COLLEGE <br>
+<span style="color:lime;"> CYBER DECODE ZONE </span>
+</div>
+
+<!--  SECRET KEYS TABLE -->
+<div class="keybox">
+<h2> SECRET CIPHER KEYS </h2>
+
+<table class="keytable">
+<tr><td>A = Z</td><td>B = Y</td><td>C = X</td><td>D = W</td><td>E = V</td></tr>
+<tr><td>F = U</td><td>G = T</td><td>H = S</td><td>I = R</td><td>J = Q</td></tr>
+<tr><td>K = P</td><td>L = O</td><td>M = N</td><td>N = M</td><td>O = L</td></tr>
+<tr><td>P = K</td><td>Q = J</td><td>R = I</td><td>S = H</td><td>T = G</td></tr>
+<tr><td>U = F</td><td>V = E</td><td>W = D</td><td>X = C</td><td>Y = B</td></tr>
+<tr><td>Z = A</td></tr>
+</table>
+</div>
+
+<!-- START PAGE -->
+<div class="container" id="startPage">
+  <h2>Enter Your Name</h2>
+  <input id="playerName" placeholder="Your Name"><br><br>
+  <button onclick="startGame()">Start Game</button>
+</div>
+
+<!-- GAME PAGE -->
+<div class="container hidden" id="gamePage">
+  <h2>Player: <span id="showName"></span></h2>
+  <h2> Time Left: <span id="timer">05:00</span></h2>
+  <h3 id="question"></h3>
+  <input id="answer" placeholder="Type Plain Text"><br><br>
+  <button onclick="checkAnswer()">Submit</button>
+  <h3 id="msg"></h3>
+</div>
+
+<!-- RESULT PAGE -->
+<div class="container hidden" id="resultPage">
+  <h2>Game Over</h2>
+  <h2>Player Name: <span id="finalName"></span></h2>
+  <h2>Time Taken: <span id="finalTime"></span></h2>
+  <h2 id="finalScore"></h2>
+</div>
+<script>
+// MATRIX EFFECT
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 16;
+let drops = [];
+
+function resetMatrix(){
+  let columns = Math.floor(canvas.width / fontSize);
+  drops = Array(columns).fill(1);
+}
+resetMatrix();
+
+function drawMatrix(){
+  ctx.fillStyle = "rgba(0,0,0,0.05)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "#0F0";
+  ctx.font = fontSize + "px monospace";
+
+  for(let i=0;i<drops.length;i++){
+    const text = letters[Math.floor(Math.random()*letters.length)];
+    ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+    if(drops[i]*fontSize > canvas.height && Math.random() > 0.975){
+      drops[i]=0;
+    }
+    drops[i]++;
+  }
+}
+window.onload = function(){
+  resizeCanvas();
+  loop();
+};
+
+function loop(){
+  drawMatrix();
+  requestAnimationFrame(loop);
+}
+// QUESTIONS (20)
+let questions = ["XLNKFGVI","KILTIZN","HLUGDZIV","ERIFH","URIVULC","NZODZIV","XRKSVI XIRNV","GLPVM","SZHSRMT","KILGLXLO","SZXPRMT","WVXIVKGRLM","ZOTLIRGSN","YOLXPXSZRM","VMXIBKGRLM","URMTVIKIRMG","ERIGFZORAZGRLM","ZFGSVMGRXZGRLM","XIBKGLTIZKSB","LKVIZKRMT HBHGVN"];
+let answers = ["COMPUTER","PROGRAM","SOFTWARE","VIRUS","FIREFOX","MALWARE","CIPHER CRIME","TOKEN","HASHING","PROTOCOL","HACKING","DECRYPTION","ALGORITHM","BLOCKCHAIN","ENCRYPTION","FINGERPRINT","VIRTUALIZATION","AUTHENTICATION","CRYPTOGRAPHY","OPERATING SYSTEM"];
+
+let qIndex=0, score=0;
+let time=900; // 15 minutes
+let timerInterval;
+let totalTime = 900;
+let usedTime = 0;
+
+// FORMAT TIMER
+function formatTime(sec){
+  let m=Math.floor(sec/60);
+  let s=sec%60;
+  return m+":"+(s<10?"0"+s:s);
+}
+
+// START GAME
+function startGame(){
+  let name=document.getElementById("playerName").value;
+  if(name==""){alert("Enter Name"); return;}
+  document.getElementById("showName").innerText=name;
+  document.getElementById("startPage").classList.add("hidden");
+  document.getElementById("gamePage").classList.remove("hidden");
+  showQuestion();
+  timerInterval=setInterval(countdown,1000);
+}
+
+// SHOW QUESTION
+function showQuestion(){
+  if(qIndex<questions.length){
+    document.getElementById("question").innerText="Q"+(qIndex+1)+": "+questions[qIndex];
+  } else endGame();
+}
+
+// CHECK ANSWER
+function checkAnswer(){
+  let user = document.getElementById("answer").value.trim().toUpperCase();
+  let correct = answers[qIndex].toUpperCase();
+
+  if(user === correct){
+    score++;
+    document.getElementById("msg").innerText=" Correct!";
+  } 
+  else{
+    document.getElementById("msg").innerText=" Wrong! correct Answer is: "+answers[qIndex];
+  }
+
+  document.getElementById("answer").value="";
+  qIndex++;
+  showQuestion();
+}
+
+
+// TIMER
+function countdown(){
+  time--;
+  usedTime++;
+  document.getElementById("timer").innerText=formatTime(time);
+  if(time<=0) endGame();
+}
+
+// END GAME
+function endGame(){
+  clearInterval(timerInterval);
+  document.getElementById("gamePage").classList.add("hidden");
+  document.getElementById("resultPage").classList.remove("hidden");
+
+  let player = document.getElementById("showName").innerText;
+  document.getElementById("finalName").innerText = player;
+
+  let finishTime = totalTime - time;
+  document.getElementById("finalTime").innerText = formatTime(finishTime);
+
+  document.getElementById("finalScore").innerText="Score: "+score+" / "+questions.length;
+}
+</script>
+
+
+</body>
+</html>
